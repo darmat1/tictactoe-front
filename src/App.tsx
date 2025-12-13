@@ -17,6 +17,7 @@ function App() {
   const [isInGame, setIsInGame] = useState(false);
   const [notification, setNotification] = useState<NotificationType>(null);
   const [gameOverResult, setGameOverResult] = useState<GameOverType>(null);
+  const [waitingForRematch, setWaitingForRematch] = useState(false);
 
   const showNotification = (msg: string, type: 'error' | 'info' = 'info') => {
     setNotification({ msg, type });
@@ -62,6 +63,26 @@ function App() {
       setIsMyTurn(false);
     });
 
+    socket.on('game_restarted', ({ board, turn }) => {
+      setBoard(board);
+      setGameOverResult(null);
+      setWaitingForRematch(false);
+
+      const amIStarting = turn === symbol;
+      setIsMyTurn(amIStarting);
+      setStatus(amIStarting ? 'Ваш ход!' : 'Ждем соперника...');
+      showNotification('Игра началась заново!', 'info');
+    });
+
+    socket.on('opponent_wants_rematch', () => {
+      showNotification('Соперник предлагает сыграть еще!', 'info');
+    });
+
+    socket.on('opponent_left', () => {
+      showNotification('Соперник покинул игру', 'error');
+      resetGame();
+    });
+
     socket.on('error', (err) => showNotification(err, 'error'));
 
     return () => { socket.off(); };
@@ -80,6 +101,17 @@ function App() {
     return '';
   };
 
+  const handleExit = () => {
+    socket.emit('leave_game', roomId);
+    resetGame();
+  };
+
+  const handlePlayAgain = () => {
+    socket.emit('request_rematch', roomId);
+    setWaitingForRematch(true);
+    showNotification('Предложение отправлено. Ждем соперника...', 'info');
+  };
+
   const resetGame = () => {
     setIsInGame(false);
     setBoard(Array(9).fill(null));
@@ -87,6 +119,7 @@ function App() {
     setRoomId('');
     setStatus('Введите ID комнаты');
     setGameOverResult(null);
+    setWaitingForRematch(false);
   };
 
   const createRoom = () => {
@@ -110,7 +143,7 @@ function App() {
 
       {!isInGame ? (
         <>
-          <h1>Tic Tac Toe</h1>
+          <h1>Tic-Tac-Toe PvP Battle</h1>
           <input placeholder="ID комнаты" value={roomId} onChange={e => setRoomId(e.target.value)} />
           <div>
             <button onClick={createRoom}>Создать</button>
@@ -141,10 +174,25 @@ function App() {
               {gameOverResult.result === 'win' && <h2 style={{ color: '#4caf50', margin: 0 }}>Победа! 🎉</h2>}
               {gameOverResult.result === 'lose' && <h2 style={{ color: '#d32f2f', margin: 0 }}>Проигрыш 😞</h2>}
               {gameOverResult.result === 'draw' && <h2 style={{ color: '#ffeb3b', margin: 0 }}>Ничья 🤝</h2>}
-
-              <button onClick={resetGame} style={{ marginTop: '15px', background: '#444' }}>
-                Меню
-              </button>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '15px' }}>
+                <button
+                  onClick={handlePlayAgain}
+                  disabled={waitingForRematch}
+                  style={{
+                    background: waitingForRematch ? '#777' : '#0088cc',
+                    flex: 1,
+                    cursor: waitingForRematch ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  {waitingForRematch ? 'Ждем ответа...' : 'Играть снова 🔄'}
+                </button>
+                <button
+                  onClick={handleExit}
+                  style={{ background: '#444', flex: 1 }}
+                >
+                  Выйти
+                </button>
+              </div>
             </div>
           )}
         </>
