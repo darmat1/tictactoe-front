@@ -75,12 +75,18 @@ function App() {
     });
 
     socket.on('opponent_wants_rematch', () => {
+      console.log('Opponent wants rematch'); // <--- ЛОГ
       showNotification('Соперник предлагает сыграть еще!', 'info');
     });
 
     socket.on('opponent_left', () => {
+      console.log('Opponent left'); // <--- ЛОГ
       showNotification('Соперник покинул игру', 'error');
-      resetGame();
+
+      // Небольшая задержка перед сбросом, чтобы юзер успел прочитать
+      setTimeout(() => {
+        resetGame();
+      }, 2000);
     });
 
     socket.on('error', (err) => showNotification(err, 'error'));
