@@ -24,9 +24,11 @@ function App() {
   const [status, setStatus] = useState('Введите ID комнаты');
   const [isMyTurn, setIsMyTurn] = useState(false);
   const [isInGame, setIsInGame] = useState(false);
+
   const [notification, setNotification] = useState<NotificationType>(null);
   const [gameOverResult, setGameOverResult] = useState<GameOverType>(null);
   const [waitingForRematch, setWaitingForRematch] = useState(false);
+
   const [myProfile] = useState<PlayerProfile>(getMyProfile());
   const [opponentProfile, setOpponentProfile] = useState<PlayerProfile | null>(null);
 
@@ -58,7 +60,7 @@ function App() {
       setOpponentProfile(null);
     });
 
-    socket.on('joined', ({ symbol }) => {
+    socket.on('joined', ({ symbol, opponentProfile }) => {
       setSymbol(symbol);
       setIsInGame(true);
       setOpponentProfile(opponentProfile);
@@ -139,7 +141,7 @@ function App() {
   const handlePlayAgain = () => {
     socket.emit('request_rematch', roomId);
     setWaitingForRematch(true);
-    showNotification('Предложение отправлено. Ждем соперника...', 'info');
+    showNotification('Предложение отправлено. Ждем соперника...', 'info', false);
   };
 
   const resetGame = () => {
@@ -150,16 +152,17 @@ function App() {
     setStatus('Введите ID комнаты');
     setGameOverResult(null);
     setWaitingForRematch(false);
+    setOpponentProfile(null);
   };
 
   const createRoom = () => {
     if (!roomId) return showNotification('Введите название комнаты', 'error');
-    socket.emit('create_game', roomId);
+    socket.emit('create_game', { roomId, profile: myProfile });
   };
 
   const joinRoom = () => {
     if (!roomId) return showNotification('Введите название комнаты', 'error');
-    socket.emit('join_game', roomId);
+    socket.emit('join_game', { roomId, profile: myProfile });
   };
 
   const handleCellClick = (index: number) => {
@@ -208,6 +211,7 @@ function App() {
             </div>
 
             <div className="vs-badge">VS</div>
+
             <div className={`player-card ${!isMyTurn && opponentProfile && !gameOverResult ? 'active' : ''}`}>
               {renderAvatar(opponentProfile)}
               <div className="player-name">{opponentProfile ? opponentProfile.name : 'Ждем...'}</div>
@@ -233,7 +237,6 @@ function App() {
             ))}
           </div>
 
-          {/* Результат */}
           {gameOverResult && (
             <div className="game-result">
               {gameOverResult.result === 'win' && <h2 style={{ color: '#4caf50' }}>Победа! 🎉</h2>}
