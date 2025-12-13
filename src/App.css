@@ -153,3 +153,63 @@ h1 {
     transform: translateY(0);
   }
 }
+
+.players-info {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 320px;
+  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.player-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100px;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #ffd700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #333;
+  font-size: 1.2rem;
+  overflow: hidden;
+  margin-bottom: 5px;
+  border: 2px solid transparent;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.player-card.active .avatar {
+  border-color: #4caf50;
+  box-shadow: 0 0 10px #4caf50;
+}
+
+.player-name {
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.vs-badge {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  color: #888;
+}

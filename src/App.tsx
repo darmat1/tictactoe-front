@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import io from 'socket.io-client';
 import WebApp from '@twa-dev/sdk';
 import './App.css';
@@ -7,6 +7,15 @@ const socket = io(import.meta.env.VITE_BACKEND_URL);
 
 type NotificationType = { msg: string; type: 'error' | 'info' } | null;
 type GameOverType = { result: 'win' | 'lose' | 'draw'; winLine?: number[] } | null;
+type PlayerProfile = { name: string; avatar: string | null };
+
+const getMyProfile = (): PlayerProfile => {
+  const user = WebApp.initDataUnsafe?.user;
+  return {
+    name: user?.first_name || 'Noname',
+    avatar: user?.photo_url || null
+  };
+};
 
 function App() {
   const [roomId, setRoomId] = useState('');
@@ -18,10 +27,24 @@ function App() {
   const [notification, setNotification] = useState<NotificationType>(null);
   const [gameOverResult, setGameOverResult] = useState<GameOverType>(null);
   const [waitingForRematch, setWaitingForRematch] = useState(false);
+  const [myProfile] = useState<PlayerProfile>(getMyProfile());
+  const [opponentProfile, setOpponentProfile] = useState<PlayerProfile | null>(null);
 
-  const showNotification = (msg: string, type: 'error' | 'info' = 'info') => {
+  const timerRef = useRef<any>(null);
+
+  const showNotification = (msg: string, type: 'error' | 'info', autoHide: boolean = true) => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+
     setNotification({ msg, type });
-    setTimeout(() => setNotification(null), 3000);
+
+    if (autoHide) {
+      timerRef.current = setTimeout(() => {
+        setNotification(null);
+      }, 3000);
+    }
   };
 
   useEffect(() => {
@@ -32,12 +55,19 @@ function App() {
       setSymbol(symbol);
       setIsInGame(true);
       setStatus('Ждем второго игрока...');
+      setOpponentProfile(null);
     });
 
     socket.on('joined', ({ symbol }) => {
       setSymbol(symbol);
       setIsInGame(true);
+      setOpponentProfile(opponentProfile);
       setStatus('Игра началась! Ходят крестики.');
+    });
+
+    socket.on('opponent_joined', ({ profile }) => {
+      setOpponentProfile(profile);
+      showNotification(`${profile.name} присоединился!`, 'info');
     });
 
     socket.on('game_start', ({ turn }) => {
@@ -67,7 +97,7 @@ function App() {
       setBoard(board);
       setGameOverResult(null);
       setWaitingForRematch(false);
-
+      setNotification(null);
       const amIStarting = turn === symbol;
       setIsMyTurn(amIStarting);
       setStatus(amIStarting ? 'Ваш ход!' : 'Ждем соперника...');
@@ -75,18 +105,12 @@ function App() {
     });
 
     socket.on('opponent_wants_rematch', () => {
-      console.log('Opponent wants rematch'); // <--- ЛОГ
-      showNotification('Соперник предлагает сыграть еще!', 'info');
+      showNotification('Соперник предлагает сыграть еще!', 'info', false);
     });
 
     socket.on('opponent_left', () => {
-      console.log('Opponent left'); // <--- ЛОГ
-      showNotification('Соперник покинул игру', 'error');
-
-      // Небольшая задержка перед сбросом, чтобы юзер успел прочитать
-      setTimeout(() => {
-        resetGame();
-      }, 2000);
+      showNotification('Соперник вышел', 'error');
+      setTimeout(() => resetGame(), 2000);
     });
 
     socket.on('error', (err) => showNotification(err, 'error'));
@@ -143,25 +167,59 @@ function App() {
     socket.emit('make_move', { roomId, index, symbol });
   };
 
+  const renderAvatar = (profile: PlayerProfile | null) => {
+    if (!profile) return <div className="avatar">?</div>;
+    if (profile.avatar) return <div className="avatar"><img src={profile.avatar} alt="avatar" /></div>;
+    return <div className="avatar">{profile.name.charAt(0).toUpperCase()}</div>;
+  };
+
   return (
     <div className="container">
-      {notification && <div className={`notification ${notification.type}`}>{notification.msg}</div>}
+      {notification && (
+        <div className={`notification ${notification.type}`}>
+          {notification.msg}
+        </div>
+      )}
 
       {!isInGame ? (
-        <>
-          <h1>Tic-Tac-Toe PvP Battle</h1>
-          <input placeholder="ID комнаты" value={roomId} onChange={e => setRoomId(e.target.value)} />
-          <div>
-            <button onClick={createRoom}>Создать</button>
-            <button onClick={joinRoom}>Войти</button>
+        <div className="lobby">
+          <h1>Tic Tac Toe</h1>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 10 }}>
+            {renderAvatar(myProfile)}
+            <span style={{ color: '#888', marginTop: 5 }}>{myProfile.name}</span>
           </div>
-        </>
+          <input
+            placeholder="Придумайте ID комнаты"
+            value={roomId}
+            onChange={e => setRoomId(e.target.value)}
+          />
+          <div className="actions">
+            <button onClick={createRoom}>Создать</button>
+            <button onClick={joinRoom} style={{ background: '#444' }}>Войти</button>
+          </div>
+        </div>
       ) : (
         <>
-          <div style={{ marginBottom: '10px', fontSize: '1.2rem' }}>
-            Вы: <span style={{ fontWeight: 'bold', color: symbol === 'X' ? '#0088cc' : '#e91e63' }}>{symbol}</span>
-            <div style={{ fontSize: '0.9rem', color: '#888', marginTop: '5px' }}>{!gameOverResult && status}</div>
+          <div className="players-info">
+            <div className={`player-card ${isMyTurn ? 'active' : ''}`}>
+              {renderAvatar(myProfile)}
+              <div className="player-name">{myProfile.name}</div>
+              <div style={{ fontWeight: 'bold', color: symbol === 'X' ? '#0088cc' : '#e91e63' }}>{symbol}</div>
+            </div>
+
+            <div className="vs-badge">VS</div>
+            <div className={`player-card ${!isMyTurn && opponentProfile && !gameOverResult ? 'active' : ''}`}>
+              {renderAvatar(opponentProfile)}
+              <div className="player-name">{opponentProfile ? opponentProfile.name : 'Ждем...'}</div>
+              {opponentProfile && (
+                <div style={{ fontWeight: 'bold', color: symbol === 'X' ? '#e91e63' : '#0088cc' }}>
+                  {symbol === 'X' ? 'O' : 'X'}
+                </div>
+              )}
+            </div>
           </div>
+
+          <div style={{ fontSize: '1rem', color: '#ccc', marginBottom: '15px' }}>{!gameOverResult && status}</div>
 
           <div className="board">
             {gameOverResult && gameOverResult.winLine && (
@@ -175,29 +233,22 @@ function App() {
             ))}
           </div>
 
+          {/* Результат */}
           {gameOverResult && (
             <div className="game-result">
-              {gameOverResult.result === 'win' && <h2 style={{ color: '#4caf50', margin: 0 }}>Победа! 🎉</h2>}
-              {gameOverResult.result === 'lose' && <h2 style={{ color: '#d32f2f', margin: 0 }}>Проигрыш 😞</h2>}
-              {gameOverResult.result === 'draw' && <h2 style={{ color: '#ffeb3b', margin: 0 }}>Ничья 🤝</h2>}
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '15px' }}>
+              {gameOverResult.result === 'win' && <h2 style={{ color: '#4caf50' }}>Победа! 🎉</h2>}
+              {gameOverResult.result === 'lose' && <h2 style={{ color: '#d32f2f' }}>Поражение 😞</h2>}
+              {gameOverResult.result === 'draw' && <h2 style={{ color: '#ffeb3b' }}>Ничья 🤝</h2>}
+
+              <div className="actions">
                 <button
                   onClick={handlePlayAgain}
                   disabled={waitingForRematch}
-                  style={{
-                    background: waitingForRematch ? '#777' : '#0088cc',
-                    flex: 1,
-                    cursor: waitingForRematch ? 'not-allowed' : 'pointer'
-                  }}
+                  style={{ background: waitingForRematch ? '#555' : '#0088cc' }}
                 >
-                  {waitingForRematch ? 'Ждем ответа...' : 'Играть снова 🔄'}
+                  {waitingForRematch ? 'Ждем...' : 'Еще раз'}
                 </button>
-                <button
-                  onClick={handleExit}
-                  style={{ background: '#444', flex: 1 }}
-                >
-                  Выйти
-                </button>
+                <button onClick={handleExit} style={{ background: '#444' }}>Выйти</button>
               </div>
             </div>
           )}
