@@ -44,3 +44,6 @@ A modern, responsive frontend for the Tic-Tac-Toe game, designed to run natively
    ```
 
 ## 📲 How to test in Telegram
+### 🎮 Live Demo
+You can try the live working version right now:
+**[👉 Play Tic-Tac-Toe PvP Battle](https://t.me/TicTacToett_bot/play)**
