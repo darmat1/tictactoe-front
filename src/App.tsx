@@ -114,21 +114,34 @@ function App() {
   }, [isMuted]);
 
   useEffect(() => {
-    WebApp.ready();
-    WebApp.expand();
-
-    socket.on('connect', () => {
+    const onConnect = () => {
       setIsConnected(true);
-      console.log('Connected to server');
-    });
+      console.log('Connected event fired');
+    };
 
-    socket.on('disconnect', () => {
+    const onDisconnect = () => {
       setIsConnected(false);
-      console.log('Disconnected');
-      // Если сервер упал во время игры — лучше выкинуть в меню, чтобы не было багов с ходами
+      console.log('Disconnected event fired');
       setIsInGame(false);
       setRoomId('');
-    });
+    };
+
+    socket.on('connect', onConnect);
+    socket.on('disconnect', onDisconnect);
+
+    if (socket.connected) {
+      setIsConnected(true);
+    }
+
+    return () => {
+      socket.off('connect', onConnect);
+      socket.off('disconnect', onDisconnect);
+    };
+  }, []);
+
+  useEffect(() => {
+    WebApp.ready();
+    WebApp.expand();
 
     socket.on('created', ({ symbol }) => {
       setSymbol(symbol);
