@@ -1,9 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import io from 'socket.io-client';
 import WebApp from '@twa-dev/sdk';
+import { Howl, Howler } from 'howler';
 import './App.css';
 
-const socket = io(import.meta.env.VITE_BACKEND_URL);
+import bgm from './assets/sounds/bgm.mp3';
+import whoosh from './assets/sounds/whoosh.mp3';
+import swish from './assets/sounds/swish.mp3';
+import draw from './assets/sounds/draw.mp3';
+import notify from './assets/sounds/notify.mp3';
+import win from './assets/sounds/win.mp3';
+import lose from './assets/sounds/lose.mp3';
+
+const socket = io(import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000');
 
 type NotificationType = { msg: string; type: 'error' | 'info' } | null;
 type GameOverType = { result: 'win' | 'lose' | 'draw'; winLine?: number[] } | null;
@@ -17,18 +26,38 @@ const getMyProfile = (): PlayerProfile => {
   };
 };
 
-const audios = {
-  bgm: new Audio('https://cdn.pixabay.com/audio/2022/03/24/audio_349d476906.mp3'),
-  move: new Audio('https://cdn.pixabay.com/audio/2023/04/13/audio_e40c88510e.mp3'),
-  win: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c7443c.mp3'),
-  lose: new Audio('https://cdn.pixabay.com/audio/2021/08/09/audio_9788cf95d8.mp3'),
-  draw: new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_c8c8a73467.mp3'),
-  notify: new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_27565e6789.mp3'),
+const sounds = {
+  bgm: new Howl({
+    src: [bgm],
+    loop: true,
+    volume: 0.2,
+    html5: false
+  }),
+  moveX: new Howl({
+    src: [whoosh],
+    volume: 0.5
+  }),
+  move0: new Howl({
+    src: [swish],
+    volume: 0.5
+  }),
+  win: new Howl({
+    src: [win],
+    volume: 0.6
+  }),
+  lose: new Howl({
+    src: [lose],
+    volume: 0.6
+  }),
+  draw: new Howl({
+    src: [draw],
+    volume: 0.6
+  }),
+  notify: new Howl({
+    src: [notify],
+    volume: 0.5
+  }),
 };
-
-audios.bgm.loop = true;
-audios.bgm.volume = 0.2;
-audios.move.volume = 0.5;
 
 function App() {
   const [roomId, setRoomId] = useState('');
@@ -56,7 +85,7 @@ function App() {
     }
 
     setNotification({ msg, type });
-    if (type === 'info') playSound('notify');
+    if (type === 'info') playSfx('notify');
 
     if (autoHide) {
       timerRef.current = setTimeout(() => {
@@ -65,23 +94,20 @@ function App() {
     }
   };
 
-  const playSound = (name: keyof typeof audios) => {
+  const playSfx = (name: keyof typeof sounds) => {
     if (isMuted) return;
-
-    const sound = audios[name];
-    if (name === 'bgm') {
-      sound.play().catch(e => console.log('Autoplay blocked', e));
-    } else {
-      sound.currentTime = 0;
-      sound.play().catch(() => { });
+    if (name !== 'bgm') {
+      sounds[name].play();
     }
   };
 
   useEffect(() => {
-    if (isMuted) {
-      audios.bgm.pause();
-    } else {
-      audios.bgm.play().catch(() => { });
+    Howler.mute(isMuted);
+
+    if (!isMuted) {
+      if (!sounds.bgm.playing()) {
+        sounds.bgm.play();
+      }
     }
   }, [isMuted]);
 
@@ -112,24 +138,25 @@ function App() {
       const amIStarting = turn === symbol;
       setIsMyTurn(amIStarting);
       setStatus(amIStarting ? 'Ваш ход!' : 'Ждем соперника...');
-      playSound('move');
     });
 
     socket.on('update_board', ({ board, turn }) => {
       setBoard(board);
+      console.log("turn", turn)
       const myTurn = turn === symbol;
       setIsMyTurn(myTurn);
       setStatus(myTurn ? 'Ваш ход!' : 'Ждем соперника...');
+      playSfx(turn === 'X' ? 'moveX' : 'move0');
     });
 
     socket.on('game_over', ({ winner, winLine }) => {
       if (winner === 'Draw') {
         setGameOverResult({ result: 'draw' });
-        playSound('draw');
+        playSfx('draw');
       } else {
         const isWin = winner === symbol;
         setGameOverResult({ result: isWin ? 'win' : 'lose', winLine });
-        playSound(isWin ? 'win' : 'lose');
+        playSfx(isWin ? 'win' : 'lose');
       }
       setIsMyTurn(false);
     });
@@ -143,7 +170,7 @@ function App() {
       setIsMyTurn(amIStarting);
       setStatus(amIStarting ? 'Ваш ход!' : 'Ждем соперника...');
       showNotification('Игра началась заново!', 'info');
-      playSound('notify');
+      playSfx('notify');
     });
 
     socket.on('opponent_wants_rematch', () => {
@@ -158,7 +185,7 @@ function App() {
     socket.on('error', (err) => showNotification(err, 'error'));
 
     return () => { socket.off(); };
-  }, [symbol, isMuted]);
+  }, [symbol]);
 
   const getStrikeClass = (line: number[]) => {
     const s = line.join('');
