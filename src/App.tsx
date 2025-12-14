@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import io from 'socket.io-client';
 import WebApp from '@twa-dev/sdk';
 import { Howl, Howler } from 'howler';
-import './App.css';
+import './App.scss';
 
 import bgm from './assets/sounds/bgm.mp3';
 import whoosh from './assets/sounds/whoosh.mp3';
@@ -294,9 +294,13 @@ function App() {
 
   return (
     <div className="container">
-      <button className="sound-btn" onClick={toggleSound}>
-        {isMuted ? '🔇' : '🔊'}
-      </button>
+      <div className='header'>
+        {isInGame && <span>Room: {roomId}</span>}
+        <button className="sound-btn" onClick={toggleSound}>
+          {isMuted ? '🔇' : '🔊'}
+        </button>
+      </div>
+
       {notification && (
         <div className={`notification ${notification.type}`}>
           {notification.msg}
@@ -326,19 +330,19 @@ function App() {
             <div className={`player-card ${isMyTurn ? 'active' : ''}`}>
               {renderAvatar(myProfile)}
               <div className="player-name">{myProfile.name}</div>
-              <div style={{ fontWeight: 'bold', color: symbol === 'X' ? '#0088cc' : '#e91e63' }}>{symbol}</div>
+              {/* <div style={{ fontWeight: 'bold', color: symbol === 'X' ? '#0088cc' : '#e91e63' }}>{symbol}</div> */}
             </div>
 
             <div className="vs-badge">VS</div>
 
-            <div className={`player-card ${!isMyTurn && opponentProfile && !gameOverResult ? 'active' : ''}`}>
+            <div className={`player-card reversed ${!isMyTurn && opponentProfile && !gameOverResult ? 'active' : ''}`}>
               {renderAvatar(opponentProfile)}
               <div className="player-name">{opponentProfile ? opponentProfile.name : 'Ждем...'}</div>
-              {opponentProfile && (
+              {/* {opponentProfile && (
                 <div style={{ fontWeight: 'bold', color: symbol === 'X' ? '#e91e63' : '#0088cc' }}>
                   {symbol === 'X' ? 'O' : 'X'}
                 </div>
-              )}
+              )} */}
             </div>
           </div>
 

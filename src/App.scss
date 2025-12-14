@@ -1,0 +1,310 @@
+// --- Переменные (Настройки темы) ---
+$bg-color: #212121;
+$board-bg: #424242;
+$board-hover: #616161;
+$primary-color: #0088cc;
+$primary-hover: #006699;
+$strike-color: #ff3b30;
+$success-color: #4caf50;
+$gold-color: #ffd700;
+$text-color: #ffffff;
+
+// --- Базовые стили ---
+#root {
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  background-color: $bg-color;
+  color: $text-color;
+  font-family: sans-serif;
+  gap: 1rem;
+}
+
+h1 {
+  color: $primary-color;
+}
+
+.header {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+
+input {
+  padding: 10px;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: none;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  margin: 5px;
+  cursor: pointer;
+  background: $primary-color;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  transition: background 0.2s;
+
+  &:hover {
+    background: $primary-hover;
+  }
+}
+
+.board {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 80px);
+  gap: 10px;
+  margin: 20px;
+
+  .cell {
+    width: 80px;
+    height: 80px;
+    background: $board-bg;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background 0.2s;
+    user-select: none;
+
+    &:hover {
+      background: $board-hover;
+    }
+  }
+
+  .strike-line {
+    position: absolute;
+    background-color: $strike-color;
+    height: 6px;
+    border-radius: 3px;
+    transform-origin: center;
+    z-index: 10;
+    box-shadow: 0 0 10px rgba($strike-color, 0.8);
+    width: 100%;
+
+    &.strike-row-0 {
+      top: 16%;
+      left: 0;
+    }
+
+    &.strike-row-1 {
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+    }
+
+    &.strike-row-2 {
+      top: 84%;
+      left: 0;
+    }
+
+    &.strike-col-0 {
+      left: 16%;
+      top: 0;
+      width: 6px;
+      height: 100%;
+    }
+
+    &.strike-col-1 {
+      left: 50%;
+      top: 0;
+      width: 6px;
+      height: 100%;
+      transform: translateX(-50%);
+    }
+
+    &.strike-col-2 {
+      left: 84%;
+      top: 0;
+      width: 6px;
+      height: 100%;
+    }
+
+    &.strike-diag-0 {
+      top: 50%;
+      left: 0;
+      width: 120%;
+      transform: translateY(-50%) rotate(45deg);
+      left: -10%;
+    }
+
+    &.strike-diag-1 {
+      top: 50%;
+      left: 0;
+      width: 120%;
+      transform: translateY(-50%) rotate(-45deg);
+      left: -10%;
+    }
+  }
+}
+
+.players-info {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 320px;
+  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 10px;
+  border-radius: 12px;
+
+
+  .player-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    max-width: 145px;
+    opacity: 0.6;
+    transition: opacity 0.3s, transform 0.3s;
+    gap: 6px;
+
+    &.reversed {
+      flex-direction: row-reverse;
+    }
+
+    &.active {
+      opacity: 1;
+      transform: scale(1.05);
+
+      .avatar {
+        border-color: $success-color;
+        box-shadow: 0 0 10px $success-color;
+      }
+    }
+  }
+
+  .vs-badge {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    color: #888;
+  }
+}
+
+.avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background-color: $gold-color;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #333;
+  font-size: 1.2rem;
+  overflow: hidden;
+  margin-bottom: 5px;
+  border: 2px solid transparent;
+  transition: border-color 0.3s, box-shadow 0.3s;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.player-name {
+  font-size: 0.7rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.game-result {
+  margin-top: 20px;
+  padding: 15px;
+  background: #333;
+  border-radius: 10px;
+  width: 100%;
+  text-align: center;
+  animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sound-btn {
+  // position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 1000;
+  padding: 0;
+  transition: transform 0.1s;
+  margin-left: auto;
+
+  &:active {
+    transform: scale(0.9);
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+  padding: 20px;
+
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255, 255, 255, 0.1);
+    border-top: 5px solid $primary-color;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
