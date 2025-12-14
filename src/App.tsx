@@ -78,6 +78,8 @@ function App() {
 
   const timerRef = useRef<any>(null);
 
+  const [isConnected, setIsConnected] = useState(socket.connected);
+
   const showNotification = (msg: string, type: 'error' | 'info', autoHide: boolean = true) => {
     if (timerRef.current) {
       clearTimeout(timerRef.current);
@@ -114,6 +116,19 @@ function App() {
   useEffect(() => {
     WebApp.ready();
     WebApp.expand();
+
+    socket.on('connect', () => {
+      setIsConnected(true);
+      console.log('Connected to server');
+    });
+
+    socket.on('disconnect', () => {
+      setIsConnected(false);
+      console.log('Disconnected');
+      // Если сервер упал во время игры — лучше выкинуть в меню, чтобы не было багов с ходами
+      setIsInGame(false);
+      setRoomId('');
+    });
 
     socket.on('created', ({ symbol }) => {
       setSymbol(symbol);
@@ -248,6 +263,21 @@ function App() {
     if (profile.avatar) return <div className="avatar"><img src={profile.avatar} alt="avatar" /></div>;
     return <div className="avatar">{profile.name.charAt(0).toUpperCase()}</div>;
   };
+
+  if (!isConnected) {
+    return (
+      <div className="container">
+        <div className="loading-screen">
+          <div className="spinner"></div>
+          <h2>Подключение к серверу...</h2>
+          <p style={{ color: '#888', maxWidth: '300px' }}>
+            Сервер может "спать" (бесплатный тариф).
+            <br />Пожалуйста, подождите 30-60 секунд.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container">
