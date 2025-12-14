@@ -138,6 +138,7 @@ function App() {
       const amIStarting = turn === symbol;
       setIsMyTurn(amIStarting);
       setStatus(amIStarting ? 'Ваш ход!' : 'Ждем соперника...');
+      playSfx('notify');
     });
 
     socket.on('update_board', ({ board, turn }) => {
@@ -146,7 +147,8 @@ function App() {
       const myTurn = turn === symbol;
       setIsMyTurn(myTurn);
       setStatus(myTurn ? 'Ваш ход!' : 'Ждем соперника...');
-      playSfx(turn === 'X' ? 'moveX' : 'move0');
+      const whoJustMoved = turn === 'X' ? 'move0' : 'moveX';
+      playSfx(whoJustMoved);
     });
 
     socket.on('game_over', ({ winner, winLine }) => {
@@ -185,7 +187,7 @@ function App() {
     socket.on('error', (err) => showNotification(err, 'error'));
 
     return () => { socket.off(); };
-  }, [symbol]);
+  }, [symbol, isMuted]);
 
   const getStrikeClass = (line: number[]) => {
     const s = line.join('');
