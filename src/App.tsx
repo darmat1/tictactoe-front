@@ -27,36 +27,13 @@ const getMyProfile = (): PlayerProfile => {
 };
 
 const sounds = {
-  bgm: new Howl({
-    src: [bgm],
-    loop: true,
-    volume: 0.2,
-    html5: false
-  }),
-  moveX: new Howl({
-    src: [whoosh],
-    volume: 0.5
-  }),
-  move0: new Howl({
-    src: [swish],
-    volume: 0.5
-  }),
-  win: new Howl({
-    src: [win],
-    volume: 0.6
-  }),
-  lose: new Howl({
-    src: [lose],
-    volume: 0.6
-  }),
-  draw: new Howl({
-    src: [draw],
-    volume: 0.6
-  }),
-  notify: new Howl({
-    src: [notify],
-    volume: 0.5
-  }),
+  bgm: new Howl({ src: [bgm], loop: true, volume: 0.2, html5: false }),
+  moveX: new Howl({ src: [whoosh], volume: 0.5 }),
+  move0: new Howl({ src: [swish], volume: 0.5 }),
+  win: new Howl({ src: [win], volume: 0.6 }),
+  lose: new Howl({ src: [lose], volume: 0.6 }),
+  draw: new Howl({ src: [draw], volume: 0.6 }),
+  notify: new Howl({ src: [notify], volume: 0.5 }),
 };
 
 function App() {
@@ -75,63 +52,36 @@ function App() {
   const [opponentProfile, setOpponentProfile] = useState<PlayerProfile | null>(null);
 
   const [isMuted, setIsMuted] = useState(true);
+  const [isConnected, setIsConnected] = useState(socket.connected);
 
   const timerRef = useRef<any>(null);
 
-  const [isConnected, setIsConnected] = useState(socket.connected);
-
   const showNotification = (msg: string, type: 'error' | 'info', autoHide: boolean = true) => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
-
+    if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; }
     setNotification({ msg, type });
     if (type === 'info') playSfx('notify');
-
-    if (autoHide) {
-      timerRef.current = setTimeout(() => {
-        setNotification(null);
-      }, 3000);
-    }
+    if (autoHide) timerRef.current = setTimeout(() => setNotification(null), 3000);
   };
 
   const playSfx = (name: keyof typeof sounds) => {
     if (isMuted) return;
-    if (name !== 'bgm') {
-      sounds[name].play();
-    }
+    if (name !== 'bgm') sounds[name].play();
   };
 
   useEffect(() => {
     Howler.mute(isMuted);
-
-    if (!isMuted) {
-      if (!sounds.bgm.playing()) {
-        sounds.bgm.play();
-      }
+    if (!isMuted && !sounds.bgm.playing()) {
+      sounds.bgm.play();
     }
   }, [isMuted]);
 
   useEffect(() => {
-    const onConnect = () => {
-      setIsConnected(true);
-      console.log('Connected event fired');
-    };
-
-    const onDisconnect = () => {
-      setIsConnected(false);
-      console.log('Disconnected event fired');
-      setIsInGame(false);
-      setRoomId('');
-    };
+    const onConnect = () => setIsConnected(true);
+    const onDisconnect = () => { setIsConnected(false); setIsInGame(false); setRoomId(''); };
 
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
-
-    if (socket.connected) {
-      setIsConnected(true);
-    }
+    if (socket.connected) setIsConnected(true);
 
     return () => {
       socket.off('connect', onConnect);
@@ -143,18 +93,24 @@ function App() {
     WebApp.ready();
     WebApp.expand();
 
-    socket.on('created', ({ symbol }) => {
-      setSymbol(symbol);
+    socket.on('created', () => {
+      setSymbol(null);
       setIsInGame(true);
       setStatus('Ждем второго игрока...');
       setOpponentProfile(null);
     });
 
-    socket.on('joined', ({ symbol, opponentProfile }) => {
-      setSymbol(symbol);
+    socket.on('game_start', ({ symbol, opponentProfile, turn }) => {
       setIsInGame(true);
+      setSymbol(symbol);
       setOpponentProfile(opponentProfile);
-      setStatus('Игра началась! Ходят крестики.');
+
+      const amIStarting = turn === symbol;
+      setIsMyTurn(amIStarting);
+      setStatus(amIStarting ? 'Ваш ход!' : 'Ждем соперника...');
+
+      playSfx('notify');
+      showNotification(`Вы играете за ${symbol === 'X' ? '❌' : '⭕'}`, 'info');
     });
 
     socket.on('opponent_joined', ({ profile }) => {
@@ -162,16 +118,8 @@ function App() {
       showNotification(`${profile.name} присоединился!`, 'info');
     });
 
-    socket.on('game_start', ({ turn }) => {
-      const amIStarting = turn === symbol;
-      setIsMyTurn(amIStarting);
-      setStatus(amIStarting ? 'Ваш ход!' : 'Ждем соперника...');
-      playSfx('notify');
-    });
-
     socket.on('update_board', ({ board, turn }) => {
       setBoard(board);
-      console.log("turn", turn)
       const myTurn = turn === symbol;
       setIsMyTurn(myTurn);
       setStatus(myTurn ? 'Ваш ход!' : 'Ждем соперника...');
@@ -191,15 +139,21 @@ function App() {
       setIsMyTurn(false);
     });
 
-    socket.on('game_restarted', ({ board, turn }) => {
+    socket.on('game_restarted', ({ board, turn, newSymbol }) => {
       setBoard(board);
       setGameOverResult(null);
       setWaitingForRematch(false);
       setNotification(null);
-      const amIStarting = turn === symbol;
+
+      if (newSymbol) setSymbol(newSymbol);
+
+      const effectiveSymbol = newSymbol || symbol;
+      const amIStarting = turn === effectiveSymbol;
+
       setIsMyTurn(amIStarting);
       setStatus(amIStarting ? 'Ваш ход!' : 'Ждем соперника...');
-      showNotification('Игра началась заново!', 'info');
+
+      showNotification(`Игра началась! Вы: ${effectiveSymbol === 'X' ? '❌' : '⭕'}`, 'info');
       playSfx('notify');
     });
 
@@ -215,7 +169,7 @@ function App() {
     socket.on('error', (err) => showNotification(err, 'error'));
 
     return () => { socket.off(); };
-  }, [symbol, isMuted]);
+  }, [symbol]);
 
   const getStrikeClass = (line: number[]) => {
     const s = line.join('');
@@ -230,47 +184,13 @@ function App() {
     return '';
   };
 
-  const handleExit = () => {
-    socket.emit('leave_game', roomId);
-    resetGame();
-  };
-
-  const handlePlayAgain = () => {
-    socket.emit('request_rematch', roomId);
-    setWaitingForRematch(true);
-    showNotification('Предложение отправлено. Ждем соперника...', 'info', false);
-  };
-
-  const resetGame = () => {
-    setIsInGame(false);
-    setBoard(Array(9).fill(null));
-    setSymbol(null);
-    setRoomId('');
-    setStatus('Введите ID комнаты');
-    setGameOverResult(null);
-    setWaitingForRematch(false);
-    setOpponentProfile(null);
-  };
-
-  const createRoom = () => {
-    if (!roomId) return showNotification('Введите название комнаты', 'error');
-    socket.emit('create_game', { roomId, profile: myProfile });
-  };
-
-  const joinRoom = () => {
-    if (!roomId) return showNotification('Введите название комнаты', 'error');
-    socket.emit('join_game', { roomId, profile: myProfile });
-  };
-
-  const handleCellClick = (index: number) => {
-    if (!isMyTurn || board[index] !== null) return;
-    socket.emit('make_move', { roomId, index, symbol });
-  };
-
-  const toggleSound = () => {
-    setIsMuted(!isMuted);
-  };
-
+  const handleExit = () => { socket.emit('leave_game', roomId); resetGame(); };
+  const handlePlayAgain = () => { socket.emit('request_rematch', roomId); setWaitingForRematch(true); showNotification('Предложение отправлено...', 'info', false); };
+  const resetGame = () => { setIsInGame(false); setBoard(Array(9).fill(null)); setSymbol(null); setRoomId(''); setStatus('Введите ID комнаты'); setGameOverResult(null); setWaitingForRematch(false); setOpponentProfile(null); };
+  const createRoom = () => { if (!roomId) return showNotification('Введите название комнаты', 'error'); socket.emit('create_game', { roomId, profile: myProfile }); };
+  const joinRoom = () => { if (!roomId) return showNotification('Введите название комнаты', 'error'); socket.emit('join_game', { roomId, profile: myProfile }); };
+  const handleCellClick = (index: number) => { if (!isMyTurn || board[index] !== null) return; socket.emit('make_move', { roomId, index, symbol }); };
+  const toggleSound = () => { setIsMuted(!isMuted); };
   const renderAvatar = (profile: PlayerProfile | null) => {
     if (!profile) return <div className="avatar">?</div>;
     if (profile.avatar) return <div className="avatar"><img src={profile.avatar} alt="avatar" /></div>;
@@ -282,11 +202,7 @@ function App() {
       <div className="container">
         <div className="loading-screen">
           <div className="spinner"></div>
-          <h2>Подключение к серверу...</h2>
-          <p style={{ color: '#888', maxWidth: '300px' }}>
-            Сервер может "спать" (бесплатный тариф).
-            <br />Пожалуйста, подождите 30-60 секунд.
-          </p>
+          <h2>Подключение...</h2>
         </div>
       </div>
     );
@@ -296,16 +212,15 @@ function App() {
     <div className="container">
       <div className='header'>
         {isInGame && <span>Room: {roomId}</span>}
-        <button className="sound-btn" onClick={toggleSound}>
+        {!!symbol && <div style={{ fontWeight: 'bold', color: symbol === 'X' ? '#0088cc' : '#e91e63' }}>
+          {symbol}
+        </div>}
+        <button className="sound-btn" style={!isInGame ? { marginLeft: 'auto' } : {}} onClick={toggleSound}>
           {isMuted ? '🔇' : '🔊'}
         </button>
       </div>
 
-      {notification && (
-        <div className={`notification ${notification.type}`}>
-          {notification.msg}
-        </div>
-      )}
+      {notification && <div className={`notification ${notification.type}`}>{notification.msg}</div>}
 
       {!isInGame ? (
         <div className="lobby">
@@ -314,11 +229,7 @@ function App() {
             {renderAvatar(myProfile)}
             <span style={{ color: '#888', marginTop: 5 }}>{myProfile.name}</span>
           </div>
-          <input
-            placeholder="Придумайте ID комнаты"
-            value={roomId}
-            onChange={e => setRoomId(e.target.value)}
-          />
+          <input placeholder="Придумайте ID комнаты" value={roomId} onChange={e => setRoomId(e.target.value)} />
           <div className="actions">
             <button onClick={createRoom}>Создать</button>
             <button onClick={joinRoom} style={{ background: '#444' }}>Войти</button>
@@ -330,7 +241,6 @@ function App() {
             <div className={`player-card ${isMyTurn ? 'active' : ''}`}>
               {renderAvatar(myProfile)}
               <div className="player-name">{myProfile.name}</div>
-              {/* <div style={{ fontWeight: 'bold', color: symbol === 'X' ? '#0088cc' : '#e91e63' }}>{symbol}</div> */}
             </div>
 
             <div className="vs-badge">VS</div>
@@ -338,11 +248,6 @@ function App() {
             <div className={`player-card reversed ${!isMyTurn && opponentProfile && !gameOverResult ? 'active' : ''}`}>
               {renderAvatar(opponentProfile)}
               <div className="player-name">{opponentProfile ? opponentProfile.name : 'Ждем...'}</div>
-              {/* {opponentProfile && (
-                <div style={{ fontWeight: 'bold', color: symbol === 'X' ? '#e91e63' : '#0088cc' }}>
-                  {symbol === 'X' ? 'O' : 'X'}
-                </div>
-              )} */}
             </div>
           </div>
 
@@ -352,7 +257,6 @@ function App() {
             {gameOverResult && gameOverResult.winLine && (
               <div className={`strike-line ${getStrikeClass(gameOverResult.winLine)}`}></div>
             )}
-
             {board.map((cell, idx) => (
               <div key={idx} className="cell" onClick={() => handleCellClick(idx)}>
                 {cell && <span style={{ color: cell === 'X' ? '#0088cc' : '#e91e63' }}>{cell}</span>}
@@ -367,11 +271,7 @@ function App() {
               {gameOverResult.result === 'draw' && <h2 style={{ color: '#ffeb3b' }}>Ничья 🤝</h2>}
 
               <div className="actions">
-                <button
-                  onClick={handlePlayAgain}
-                  disabled={waitingForRematch}
-                  style={{ background: waitingForRematch ? '#555' : '#0088cc' }}
-                >
+                <button onClick={handlePlayAgain} disabled={waitingForRematch} style={{ background: waitingForRematch ? '#555' : '#0088cc' }}>
                   {waitingForRematch ? 'Ждем...' : 'Еще раз'}
                 </button>
                 <button onClick={handleExit} style={{ background: '#444' }}>Выйти</button>

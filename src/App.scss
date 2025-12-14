@@ -103,7 +103,7 @@ button {
     width: 100%;
 
     &.strike-row-0 {
-      top: 16%;
+      top: 14%;
       left: 0;
     }
 
@@ -240,6 +240,7 @@ button {
   width: 100%;
   text-align: center;
   animation: fadeIn 0.5s;
+  box-sizing: border-box;
 }
 
 @keyframes fadeIn {
@@ -271,7 +272,6 @@ button {
   z-index: 1000;
   padding: 0;
   transition: transform 0.1s;
-  margin-left: auto;
 
   &:active {
     transform: scale(0.9);
