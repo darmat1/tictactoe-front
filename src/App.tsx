@@ -17,6 +17,19 @@ const getMyProfile = (): PlayerProfile => {
   };
 };
 
+const audios = {
+  bgm: new Audio('https://cdn.pixabay.com/audio/2022/03/24/audio_349d476906.mp3'),
+  move: new Audio('https://cdn.pixabay.com/audio/2023/04/13/audio_e40c88510e.mp3'),
+  win: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c7443c.mp3'),
+  lose: new Audio('https://cdn.pixabay.com/audio/2021/08/09/audio_9788cf95d8.mp3'),
+  draw: new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_c8c8a73467.mp3'),
+  notify: new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_27565e6789.mp3'),
+};
+
+audios.bgm.loop = true;
+audios.bgm.volume = 0.2;
+audios.move.volume = 0.5;
+
 function App() {
   const [roomId, setRoomId] = useState('');
   const [symbol, setSymbol] = useState<'X' | 'O' | null>(null);
@@ -32,6 +45,8 @@ function App() {
   const [myProfile] = useState<PlayerProfile>(getMyProfile());
   const [opponentProfile, setOpponentProfile] = useState<PlayerProfile | null>(null);
 
+  const [isMuted, setIsMuted] = useState(true);
+
   const timerRef = useRef<any>(null);
 
   const showNotification = (msg: string, type: 'error' | 'info', autoHide: boolean = true) => {
@@ -41,6 +56,7 @@ function App() {
     }
 
     setNotification({ msg, type });
+    if (type === 'info') playSound('notify');
 
     if (autoHide) {
       timerRef.current = setTimeout(() => {
@@ -48,6 +64,26 @@ function App() {
       }, 3000);
     }
   };
+
+  const playSound = (name: keyof typeof audios) => {
+    if (isMuted) return;
+
+    const sound = audios[name];
+    if (name === 'bgm') {
+      sound.play().catch(e => console.log('Autoplay blocked', e));
+    } else {
+      sound.currentTime = 0;
+      sound.play().catch(() => { });
+    }
+  };
+
+  useEffect(() => {
+    if (isMuted) {
+      audios.bgm.pause();
+    } else {
+      audios.bgm.play().catch(() => { });
+    }
+  }, [isMuted]);
 
   useEffect(() => {
     WebApp.ready();
@@ -76,6 +112,7 @@ function App() {
       const amIStarting = turn === symbol;
       setIsMyTurn(amIStarting);
       setStatus(amIStarting ? 'Ваш ход!' : 'Ждем соперника...');
+      playSound('move');
     });
 
     socket.on('update_board', ({ board, turn }) => {
@@ -88,9 +125,11 @@ function App() {
     socket.on('game_over', ({ winner, winLine }) => {
       if (winner === 'Draw') {
         setGameOverResult({ result: 'draw' });
+        playSound('draw');
       } else {
         const isWin = winner === symbol;
         setGameOverResult({ result: isWin ? 'win' : 'lose', winLine });
+        playSound(isWin ? 'win' : 'lose');
       }
       setIsMyTurn(false);
     });
@@ -104,6 +143,7 @@ function App() {
       setIsMyTurn(amIStarting);
       setStatus(amIStarting ? 'Ваш ход!' : 'Ждем соперника...');
       showNotification('Игра началась заново!', 'info');
+      playSound('notify');
     });
 
     socket.on('opponent_wants_rematch', () => {
@@ -118,7 +158,7 @@ function App() {
     socket.on('error', (err) => showNotification(err, 'error'));
 
     return () => { socket.off(); };
-  }, [symbol]);
+  }, [symbol, isMuted]);
 
   const getStrikeClass = (line: number[]) => {
     const s = line.join('');
@@ -170,6 +210,10 @@ function App() {
     socket.emit('make_move', { roomId, index, symbol });
   };
 
+  const toggleSound = () => {
+    setIsMuted(!isMuted);
+  };
+
   const renderAvatar = (profile: PlayerProfile | null) => {
     if (!profile) return <div className="avatar">?</div>;
     if (profile.avatar) return <div className="avatar"><img src={profile.avatar} alt="avatar" /></div>;
@@ -178,6 +222,9 @@ function App() {
 
   return (
     <div className="container">
+      <button className="sound-btn" onClick={toggleSound}>
+        {isMuted ? '🔇' : '🔊'}
+      </button>
       {notification && (
         <div className={`notification ${notification.type}`}>
           {notification.msg}
