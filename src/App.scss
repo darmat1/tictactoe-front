@@ -87,6 +87,13 @@ button {
     transition: background 0.2s;
     user-select: none;
 
+    >span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+
     &:hover {
       background: $board-hover;
     }

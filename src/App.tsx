@@ -11,6 +11,8 @@ import draw from './assets/sounds/draw.mp3';
 import notify from './assets/sounds/notify.mp3';
 import win from './assets/sounds/win.mp3';
 import lose from './assets/sounds/lose.mp3';
+import Cell from './components/Cell';
+import Cat from './components/Cat';
 
 const socket = io(import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000');
 
@@ -252,15 +254,15 @@ function App() {
           </div>
 
           <div style={{ fontSize: '1rem', color: '#ccc', marginBottom: '15px' }}>{!gameOverResult && status}</div>
-
+          <div style={{ position: "relative", width: "260px" }}>
+            <Cat />
+          </div>
           <div className="board">
             {gameOverResult && gameOverResult.winLine && (
               <div className={`strike-line ${getStrikeClass(gameOverResult.winLine)}`}></div>
             )}
             {board.map((cell, idx) => (
-              <div key={idx} className="cell" onClick={() => handleCellClick(idx)}>
-                {cell && <span style={{ color: cell === 'X' ? '#0088cc' : '#e91e63' }}>{cell}</span>}
-              </div>
+              <Cell key={idx} cell={cell} onClick={() => handleCellClick(idx)} />
             ))}
           </div>
 

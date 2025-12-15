@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "@twa-dev/sdk": "^8.0.2",
+    "framer-motion": "^12.23.26",
     "howler": "^2.2.4",
+    "lottie-react": "^2.4.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "socket.io-client": "^4.8.1"
