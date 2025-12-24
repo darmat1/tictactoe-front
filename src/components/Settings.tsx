@@ -14,7 +14,7 @@ const UkrainianVideo = () => {
   return (
     <div className="ukrainian-video">
       <img
-        src="/src/assets/images/potuzhno.gif"
+        src="/static/images/potuzhno.gif"
         alt="Potuzhno"
         className="funny-gif"
       />
@@ -24,7 +24,7 @@ const UkrainianVideo = () => {
 
 const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, isMuted, toggleSound, volume, setVolume }) => {
   const { t, i18n } = useTranslation();
-  
+
   if (!isOpen) return null;
 
   const shouldShowVideo = i18n.language === 'uk' && volume === 1.0;
@@ -41,13 +41,13 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, isMuted, toggleSou
           <h2>{t('settings.title')}</h2>
           <button className="close-btn" onClick={onClose}>×</button>
         </div>
-        
+
         <div className="settings-content">
           <div className="setting-group">
             <h3>{t('settings.language')}</h3>
             <LanguageSelector />
           </div>
-          
+
           <div className="setting-group">
             <h3>{t('settings.sound')}</h3>
             <div className="sound-controls">
@@ -64,7 +64,7 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, isMuted, toggleSou
                   {isMuted ? t('settings.soundOff') : t('settings.soundOn')}
                 </span>
               </div>
-              
+
               <div className="volume-control">
                 <label htmlFor="volume">{t('settings.volume')}</label>
                 <input
@@ -81,7 +81,7 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, isMuted, toggleSou
               </div>
             </div>
           </div>
-          
+
           {shouldShowVideo && <UkrainianVideo />}
         </div>
       </div>
