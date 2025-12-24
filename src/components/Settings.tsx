@@ -13,13 +13,10 @@ interface SettingsProps {
 const UkrainianVideo = () => {
   return (
     <div className="ukrainian-video">
-      <video
-        src="/src/assets/videos/potuzhno.mp4"
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="funny-video"
+      <img
+        src="/src/assets/images/potuzhno.gif"
+        alt="Potuzhno"
+        className="funny-gif"
       />
     </div>
   );
