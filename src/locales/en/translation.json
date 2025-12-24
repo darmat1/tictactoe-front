@@ -1,0 +1,49 @@
+{
+  "common": {
+    "room": "Room: {{roomId}}",
+    "vs": "VS",
+    "waiting": "Waiting...",
+    "sound": {
+      "on": "🔊",
+      "off": "🔇"
+    }
+  },
+  "lobby": {
+    "title": "Tic Tac Toe",
+    "roomInputPlaceholder": "Room ID",
+    "create": "Create",
+    "join": "Join"
+  },
+  "game": {
+    "enterRoomId": "Enter room ID",
+    "waitingForPlayer": "Waiting for second player...",
+    "yourTurn": "Your turn!",
+    "waitingForOpponent": "Waiting for opponent...",
+    "waitingForOpponentName": "Waiting...",
+    "connecting": "Connecting..."
+  },
+  "notifications": {
+    "youArePlayingAs": "You are playing as {{symbol}}",
+    "opponentJoined": "{{name}} joined!",
+    "rematchRequested": "Opponent wants to play again!",
+    "rematchSent": "Request sent...",
+    "opponentLeft": "Opponent left",
+    "enterRoomName": "Enter room name",
+    "gameStarted": "Game started! You: {{symbol}}"
+  },
+  "gameOver": {
+    "win": "Victory! 🎉",
+    "lose": "Defeat 😞",
+    "draw": "Draw 🤝",
+    "playAgain": "Play again",
+    "exit": "Exit"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "sound": "Sound",
+    "soundOn": "Sound On",
+    "soundOff": "Sound Off",
+    "volume": "Volume"
+  }
+}

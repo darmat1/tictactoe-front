@@ -1,0 +1,49 @@
+{
+  "common": {
+    "room": "Pokój: {{roomId}}",
+    "vs": "VS",
+    "waiting": "Czekamy...",
+    "sound": {
+      "on": "🔊",
+      "off": "🔇"
+    }
+  },
+  "lobby": {
+    "title": "Kółko i Krzyżyk",
+    "roomInputPlaceholder": "ID pokoju",
+    "create": "Stwórz",
+    "join": "Dołącz"
+  },
+  "game": {
+    "enterRoomId": "Wpisz ID pokoju",
+    "waitingForPlayer": "Czekamy na drugiego gracza...",
+    "yourTurn": "Twój ruch!",
+    "waitingForOpponent": "Czekamy na przeciwnika...",
+    "waitingForOpponentName": "Czekamy...",
+    "connecting": "Łączenie..."
+  },
+  "notifications": {
+    "youArePlayingAs": "Grasz jako {{symbol}}",
+    "opponentJoined": "{{name}} dołączył!",
+    "rematchRequested": "Przeciwnik proponuje kolejną grę!",
+    "rematchSent": "Propozycja wysłana...",
+    "opponentLeft": "Przeciwnik wyszedł",
+    "enterRoomName": "Wpisz nazwę pokoju",
+    "gameStarted": "Gra rozpoczęta! Ty: {{symbol}}"
+  },
+  "gameOver": {
+    "win": "Zwycięstwo! 🎉",
+    "lose": "Porażka 😞",
+    "draw": "Remis 🤝",
+    "playAgain": "Jeszcze raz",
+    "exit": "Wyjdź"
+  },
+  "settings": {
+    "title": "Ustawienia",
+    "language": "Język",
+    "sound": "Dźwięk",
+    "soundOn": "Dźwięk włącz.",
+    "soundOff": "Dźwięk wył.",
+    "volume": "Głośność"
+  }
+}

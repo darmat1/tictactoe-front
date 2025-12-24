@@ -1,0 +1,49 @@
+{
+  "common": {
+    "room": "Místnost: {{roomId}}",
+    "vs": "VS",
+    "waiting": "Čekáme...",
+    "sound": {
+      "on": "🔊",
+      "off": "🔇"
+    }
+  },
+  "lobby": {
+    "title": "Piškvorky",
+    "roomInputPlaceholder": "ID místnosti",
+    "create": "Vytvořit",
+    "join": "Připojit"
+  },
+  "game": {
+    "enterRoomId": "Zadejte ID místnosti",
+    "waitingForPlayer": "Čekáme na druhého hráče...",
+    "yourTurn": "Jste na tahu!",
+    "waitingForOpponent": "Čekáme na soupeře...",
+    "waitingForOpponentName": "Čekáme...",
+    "connecting": "Připojuji..."
+  },
+  "notifications": {
+    "youArePlayingAs": "Hrajete jako {{symbol}}",
+    "opponentJoined": "{{name}} se připojil!",
+    "rematchRequested": "Soupeř chce hrát znovu!",
+    "rematchSent": "Žádost odeslána...",
+    "opponentLeft": "Soupeř odešel",
+    "enterRoomName": "Zadejte název místnosti",
+    "gameStarted": "Hra začala! Vy: {{symbol}}"
+  },
+  "gameOver": {
+    "win": "Výhra! 🎉",
+    "lose": "Prohra 😞",
+    "draw": "Remíza 🤝",
+    "playAgain": "Znovu",
+    "exit": "Odejít"
+  },
+  "settings": {
+    "title": "Nastavení",
+    "language": "Jazyk",
+    "sound": "Zvuk",
+    "soundOn": "Zvuk zap.",
+    "soundOff": "Zvuk vyp.",
+    "volume": "Hlasitost"
+  }
+}

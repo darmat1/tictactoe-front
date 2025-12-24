@@ -1,0 +1,49 @@
+{
+  "common": {
+    "room": "房间: {{roomId}}",
+    "vs": "VS",
+    "waiting": "等待中...",
+    "sound": {
+      "on": "🔊",
+      "off": "🔇"
+    }
+  },
+  "lobby": {
+    "title": "井字棋",
+    "roomInputPlaceholder": "房间ID",
+    "create": "创建",
+    "join": "加入"
+  },
+  "game": {
+    "enterRoomId": "输入房间ID",
+    "waitingForPlayer": "等待第二个玩家...",
+    "yourTurn": "你的回合!",
+    "waitingForOpponent": "等待对手...",
+    "waitingForOpponentName": "等待中...",
+    "connecting": "连接中..."
+  },
+  "notifications": {
+    "youArePlayingAs": "你是 {{symbol}}",
+    "opponentJoined": "{{name}} 加入了!",
+    "rematchRequested": "对手想要再玩一局!",
+    "rematchSent": "请求已发送...",
+    "opponentLeft": "对手离开了",
+    "enterRoomName": "输入房间名称",
+    "gameStarted": "游戏开始! 你: {{symbol}}"
+  },
+  "gameOver": {
+    "win": "胜利! 🎉",
+    "lose": "失败 😞",
+    "draw": "平局 🤝",
+    "playAgain": "再来一局",
+    "exit": "退出"
+  },
+  "settings": {
+    "title": "设置",
+    "language": "语言",
+    "sound": "声音",
+    "soundOn": "声音开",
+    "soundOff": "声音关",
+    "volume": "音量"
+  }
+}

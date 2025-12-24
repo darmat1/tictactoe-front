@@ -1,0 +1,49 @@
+{
+  "common": {
+    "room": "ოთახი: {{roomId}}",
+    "vs": "VS",
+    "waiting": "ველოდებით...",
+    "sound": {
+      "on": "🔊",
+      "off": "🔇"
+    }
+  },
+  "lobby": {
+    "title": "ნულოები და ჯვრები",
+    "roomInputPlaceholder": "ოთახის ID",
+    "create": "შექმნა",
+    "join": "შესვლა"
+  },
+  "game": {
+    "enterRoomId": "ოთახის ID-ს შეყვანა",
+    "waitingForPlayer": "ველოდებით მეორე მოთამაშეს...",
+    "yourTurn": "თქვენი სვლა!",
+    "waitingForOpponent": "ველოდებით მოწინააღმდეგეს...",
+    "waitingForOpponentName": "ველოდებით...",
+    "connecting": "დაკავშირება..."
+  },
+  "notifications": {
+    "youArePlayingAs": "თქვენ თამაშობთ {{symbol}}-ით",
+    "opponentJoined": "{{name}} შეუერთდა!",
+    "rematchRequested": "მოწინააღმდეგე ითხოვს თამაშს!",
+    "rematchSent": "მოთხოვნა გაგზავნილია...",
+    "opponentLeft": "მოწინააღმდეგე წავიდა",
+    "enterRoomName": "ოთახის სახელის შეყვანა",
+    "gameStarted": "თამაში დაიწყო! თქვენ: {{symbol}}"
+  },
+  "gameOver": {
+    "win": "გამარჯვება! 🎉",
+    "lose": "დამარცხენა 😞",
+    "draw": "ფრე 🤝",
+    "playAgain": "კიდევ",
+    "exit": "გასვლა"
+  },
+  "settings": {
+    "title": "პარამეტრები",
+    "language": "ენა",
+    "sound": "ხმა",
+    "soundOn": "ხმა ჩართ.",
+    "soundOff": "ხმა გამორთ.",
+    "volume": "ხმის სიმაღლე"
+  }
+}

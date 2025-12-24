@@ -1,0 +1,49 @@
+{
+  "common": {
+    "room": "ルーム: {{roomId}}",
+    "vs": "VS",
+    "waiting": "待機中...",
+    "sound": {
+      "on": "🔊",
+      "off": "🔇"
+    }
+  },
+  "lobby": {
+    "title": "三目並べ",
+    "roomInputPlaceholder": "ルームID",
+    "create": "作成",
+    "join": "参加"
+  },
+  "game": {
+    "enterRoomId": "ルームIDを入力",
+    "waitingForPlayer": "2人目のプレイヤーを待っています...",
+    "yourTurn": "あなたの番です!",
+    "waitingForOpponent": "対戦相手を待っています...",
+    "waitingForOpponentName": "待機中...",
+    "connecting": "接続中..."
+  },
+  "notifications": {
+    "youArePlayingAs": "あなたは{{symbol}}でプレイしています",
+    "opponentJoined": "{{name}}が参加しました!",
+    "rematchRequested": "対戦相手が再戦を望んでいます!",
+    "rematchSent": "リクエストを送信しました...",
+    "opponentLeft": "対戦相手が退出しました",
+    "enterRoomName": "ルーム名を入力",
+    "gameStarted": "ゲーム開始! あなた: {{symbol}}"
+  },
+  "gameOver": {
+    "win": "勝利! 🎉",
+    "lose": "敗北 😞",
+    "draw": "引き分け 🤝",
+    "playAgain": "もう一度",
+    "exit": "退出"
+  },
+  "settings": {
+    "title": "設定",
+    "language": "言語",
+    "sound": "サウンド",
+    "soundOn": "サウンドオン",
+    "soundOff": "サウンドオフ",
+    "volume": "音量"
+  }
+}

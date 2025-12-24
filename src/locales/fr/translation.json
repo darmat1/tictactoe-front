@@ -1,0 +1,49 @@
+{
+  "common": {
+    "room": "Salle: {{roomId}}",
+    "vs": "VS",
+    "waiting": "En attente...",
+    "sound": {
+      "on": "🔊",
+      "off": "🔇"
+    }
+  },
+  "lobby": {
+    "title": "Morpion",
+    "roomInputPlaceholder": "ID de salle",
+    "create": "Créer",
+    "join": "Rejoindre"
+  },
+  "game": {
+    "enterRoomId": "Entrer l'ID de la salle",
+    "waitingForPlayer": "En attente du deuxième joueur...",
+    "yourTurn": "Votre tour!",
+    "waitingForOpponent": "En attente de l'adversaire...",
+    "waitingForOpponentName": "En attente...",
+    "connecting": "Connexion..."
+  },
+  "notifications": {
+    "youArePlayingAs": "Vous jouez en tant que {{symbol}}",
+    "opponentJoined": "{{name}} a rejoint!",
+    "rematchRequested": "L'adversaire propose de rejouer!",
+    "rematchSent": "Proposition envoyée...",
+    "opponentLeft": "L'adversaire est parti",
+    "enterRoomName": "Entrer le nom de la salle",
+    "gameStarted": "Partie commencée! Vous: {{symbol}}"
+  },
+  "gameOver": {
+    "win": "Victoire! 🎉",
+    "lose": "Défaite 😞",
+    "draw": "Match nul 🤝",
+    "playAgain": "Rejouer",
+    "exit": "Quitter"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "language": "Langue",
+    "sound": "Son",
+    "soundOn": "Son activé",
+    "soundOff": "Son désactivé",
+    "volume": "Volume"
+  }
+}
