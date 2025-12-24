@@ -14,6 +14,16 @@
     "create": "إنشاء",
     "join": "انضمام"
   },
+  "roomList": {
+    "title": "الغرف المتاحة",
+    "noRooms": "لا توجد غرف نشطة",
+    "join": "انضمام",
+    "ownRoom": "غرفتك",
+    "justNow": "الآن",
+    "minutesAgo": "منذ {{count}} دقيقة",
+    "hoursAgo": "منذ {{count}} ساعة",
+    "daysAgo": "منذ {{count}} يوم"
+  },
   "game": {
     "enterRoomId": "أدخل معرف الغرفة",
     "waitingForPlayer": "في انتظار اللاعب الثاني...",
@@ -45,5 +55,15 @@
     "soundOn": "الصوت مفعل",
     "soundOff": "الصوت معطل",
     "volume": "مستوى الصوت"
+  },
+  "errors": {
+    "roomOccupied": "الغرفة محجوزة!",
+    "roomNotFound": "الغرفة غير موجودة",
+    "roomFull": "الغرفة ممتلئة",
+    "gameNotFound": "اللعبة غير موجودة",
+    "notYourTurn": "ليس دورك!",
+    "cellOccupied": "الخلية محجوزة",
+    "notPlayingAsX": "أنت لا تلعب كـ X!",
+    "notPlayingAsO": "أنت لا تلعب كـ O!"
   }
 }

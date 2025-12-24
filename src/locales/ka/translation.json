@@ -14,6 +14,16 @@
     "create": "შექმნა",
     "join": "შესვლა"
   },
+  "roomList": {
+    "title": "ხელმისაწვდომი ოთახები",
+    "noRooms": "აქტიური ოთახები არ არის",
+    "join": "შესვლა",
+    "ownRoom": "თქვენი ოთახი",
+    "justNow": "ახლახან",
+    "minutesAgo": "{{count}} წუთის წინ",
+    "hoursAgo": "{{count}} საათის წინ",
+    "daysAgo": "{{count}} დღის წინ"
+  },
   "game": {
     "enterRoomId": "ოთახის ID-ს შეყვანა",
     "waitingForPlayer": "ველოდებით მეორე მოთამაშეს...",
@@ -45,5 +55,15 @@
     "soundOn": "ხმა ჩართ.",
     "soundOff": "ხმა გამორთ.",
     "volume": "ხმის სიმაღლე"
+  },
+  "errors": {
+    "roomOccupied": "ოთახი დაკავებულია!",
+    "roomNotFound": "ოთახი არ მოიძებნა",
+    "roomFull": "ოთახი სრულია",
+    "gameNotFound": "თამაში არ მოიძებნა",
+    "notYourTurn": "შენის ჯერი არა!",
+    "cellOccupied": "უჯრედი დაკავებულია",
+    "notPlayingAsX": "თქვენ X-ით არ თამობთ!",
+    "notPlayingAsO": "თქვენ O-ით არ თამობთ!"
   }
 }

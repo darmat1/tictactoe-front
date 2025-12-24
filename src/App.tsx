@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import io from 'socket.io-client';
 import WebApp from '@twa-dev/sdk';
 import { Howl, Howler } from 'howler';
@@ -15,16 +15,20 @@ import lose from './assets/sounds/lose.mp3';
 import Cell from './components/Cell';
 import Cat from './components/Cat';
 import Settings from './components/Settings';
+import RoomList from './components/RoomList';
 
 const socket = io(import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000');
 
-type NotificationType = { msg: string; type: 'error' | 'info' } | null;
-type GameOverType = { result: 'win' | 'lose' | 'draw'; winLine?: number[] } | null;
-type PlayerProfile = { name: string; avatar: string | null };
+export type NotificationType = { msg: string; type: 'error' | 'info' } | null;
+export type GameOverType = { result: 'win' | 'lose' | 'draw'; winLine?: number[] } | null;
+export type PlayerProfile = { id: string; name: string; avatar: string | null };
+export type Room = { id: string; creatorProfile: PlayerProfile; createdAt: string };
+export type AvailableRooms = { rooms: Room[] };
 
 const getMyProfile = (): PlayerProfile => {
   const user = WebApp.initDataUnsafe?.user;
   return {
+    id: user?.id?.toString() || Math.random().toString(36).substr(2, 9),
     name: user?.first_name || 'Noname',
     avatar: user?.photo_url || null
   };
@@ -58,19 +62,53 @@ function App() {
   const [myProfile] = useState<PlayerProfile>(getMyProfile());
   const [opponentProfile, setOpponentProfile] = useState<PlayerProfile | null>(null);
 
-  const [isMuted, setIsMuted] = useState(false);
-  const [volume, setVolume] = useState(0.5);
+  const loadSettings = () => ({
+    volume: parseFloat(localStorage.getItem('tictactoe-volume') || '0.5'),
+    isMuted: localStorage.getItem('tictactoe-muted') === 'true',
+    language: localStorage.getItem('tictactoe-language') || 'en'
+  });
+
+  const savedSettings = loadSettings();
+
+  const [volume, setVolume] = useState(savedSettings.volume);
+  const [isMuted, setIsMuted] = useState(savedSettings.isMuted);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isConnected, setIsConnected] = useState(socket.connected);
+  const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
+
 
   const timerRef = useRef<any>(null);
 
-  const showNotification = (msgKey: string, params?: any, type: 'error' | 'info' = 'info', autoHide: boolean = true) => {
+  const showNotification = useCallback((msgKey: string, params?: any, type: 'error' | 'info' = 'info', autoHide: boolean = true) => {
     if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; }
     const msg = params ? t(msgKey, params) : t(msgKey);
     setNotification({ msg: msg as string, type });
     if (type === 'info') playSfx('notify');
     if (autoHide) timerRef.current = setTimeout(() => setNotification(null), 3000);
+  }, [t, i18n.language]);
+
+  useEffect(() => {
+    localStorage.setItem('tictactoe-language', i18n.language);
+  }, [i18n.language]);
+
+  useEffect(() => {
+    if (savedSettings.language !== i18n.language) {
+      i18n.changeLanguage(savedSettings.language);
+    }
+  }, []);
+
+  const mapBackendError = (errorKey: string): string => {
+    const errorMap: Record<string, string> = {
+      'ROOM_OCCUPIED': 'errors.roomOccupied',
+      'ROOM_NOT_FOUND': 'errors.roomNotFound',
+      'ROOM_FULL': 'errors.roomFull',
+      'GAME_NOT_FOUND': 'errors.gameNotFound',
+      'NOT_YOUR_TURN': 'errors.notYourTurn',
+      'CELL_OCCUPIED': 'errors.cellOccupied',
+      'NOT_PLAYING_AS_X': 'errors.notPlayingAsX',
+      'NOT_PLAYING_AS_O': 'errors.notPlayingAsO'
+    };
+    return errorMap[errorKey] || `errors.unknown.${errorKey}`;
   };
 
   const playSfx = (name: keyof typeof sounds) => {
@@ -84,6 +122,34 @@ function App() {
       sounds.bgm.play();
     }
   }, [isMuted]);
+
+  useEffect(() => {
+    const onConnect = () => {
+      setIsConnected(true);
+      socket.emit('get_rooms');
+    };
+    const onDisconnect = () => {
+      setIsConnected(false);
+      setIsInGame(false);
+      setRoomId('');
+      setAvailableRooms([]);
+    };
+
+    socket.on('connect', onConnect);
+    socket.on('disconnect', onDisconnect);
+    if (socket.connected) setIsConnected(true);
+
+    return () => {
+      socket.off('connect', onConnect);
+      socket.off('disconnect', onDisconnect);
+    };
+  }, [i18n.language]);
+
+  useEffect(() => {
+    if (!isInGame) {
+      setStatus('game.enterRoomId');
+    }
+  }, [t, isInGame]);
 
   useEffect(() => {
     const onConnect = () => setIsConnected(true);
@@ -103,18 +169,9 @@ function App() {
     if (!isInGame) {
       setStatus('game.enterRoomId');
     }
-  }, [t, isInGame]);
-
-  useEffect(() => {
-    if (!isInGame) {
-      setStatus('game.enterRoomId');
-    }
   }, [i18n.language, isInGame]);
 
   useEffect(() => {
-    WebApp.ready();
-    WebApp.expand();
-
     socket.on('created', () => {
       setSymbol(null);
       setIsInGame(true);
@@ -185,13 +242,50 @@ function App() {
 
     socket.on('opponent_left', () => {
       showNotification(t('notifications.opponentLeft'), 'error');
+      socket.emit('get_rooms');
       setTimeout(() => resetGame(), 2000);
     });
 
-    socket.on('error', (err) => showNotification(err, 'error'));
+    socket.on('rooms_updated', (data: AvailableRooms) => {
+      setAvailableRooms(data.rooms);
+    });
 
-    return () => { socket.off(); };
-  }, [symbol]);
+    socket.on('error', (err) => {
+      const errorKey = typeof err === 'string' && err.includes('[')
+        ? err.split('[')[0].trim()
+        : err;
+      const translatedErrorKey = mapBackendError(errorKey);
+
+      if (['ROOM_NOT_FOUND', 'ROOM_FULL', 'ROOM_OCCUPIED'].includes(errorKey) && roomId) {
+        setAvailableRooms(prev => prev.filter(room => room.id !== roomId));
+      }
+
+      setTimeout(() => {
+        showNotification(translatedErrorKey, undefined, 'error');
+      }, 50);
+    });
+
+    return () => {
+      socket.off('created');
+      socket.off('game_start');
+      socket.off('opponent_joined');
+      socket.off('update_board');
+      socket.off('game_over');
+      socket.off('game_restarted');
+      socket.off('opponent_wants_rematch');
+      socket.off('opponent_left');
+      socket.off('error');
+    };
+  }, [symbol, i18n.language]);
+
+  useEffect(() => {
+    if (notification) {
+      setNotification({
+        ...notification,
+        msg: t(notification.msg as string)
+      });
+    }
+  }, [i18n.language, t]);
 
   const getStrikeClass = (line: number[]) => {
     const s = line.join('');
@@ -206,16 +300,29 @@ function App() {
     return '';
   };
 
-  const handleExit = () => { socket.emit('leave_game', roomId); resetGame(); };
+  const handleExit = () => {
+    socket.emit('leave_game', roomId);
+    socket.emit('get_rooms');
+    resetGame();
+  };
   const handlePlayAgain = () => { socket.emit('request_rematch', roomId); setWaitingForRematch(true); showNotification('notifications.rematchSent', undefined, 'info', false); };
   const resetGame = () => { setIsInGame(false); setBoard(Array(9).fill(null)); setSymbol(null); setRoomId(''); setStatus('game.enterRoomId'); setGameOverResult(null); setWaitingForRematch(false); setOpponentProfile(null); };
   const createRoom = () => { if (!roomId) return showNotification('notifications.enterRoomName', undefined, 'error'); socket.emit('create_game', { roomId, profile: myProfile }); };
-  const joinRoom = () => { if (!roomId) return showNotification('notifications.enterRoomName', undefined, 'error'); socket.emit('join_game', { roomId, profile: myProfile }); };
+  const joinRoomFromList = (roomIdToList: string) => {
+    setRoomId(roomIdToList);
+    socket.emit('join_game', { roomId: roomIdToList, profile: myProfile });
+  };
+
   const handleCellClick = (index: number) => { if (!isMyTurn || board[index] !== null) return; socket.emit('make_move', { roomId, index, symbol }); };
-  const toggleSound = () => { setIsMuted(!isMuted); };
+  const toggleSound = () => {
+    const newMutedState = !isMuted;
+    setIsMuted(newMutedState);
+    localStorage.setItem('tictactoe-muted', newMutedState.toString());
+  };
 
   const updateVolume = (newVolume: number) => {
     setVolume(newVolume);
+    localStorage.setItem('tictactoe-volume', newVolume.toString());
     sounds = createSounds(newVolume);
     Howler.volume(newVolume);
   };
@@ -260,8 +367,12 @@ function App() {
           <input placeholder={t('lobby.roomInputPlaceholder')} value={roomId} onChange={e => setRoomId(e.target.value)} />
           <div className="actions">
             <button onClick={createRoom}>{t('lobby.create')}</button>
-            <button onClick={joinRoom} style={{ background: '#444' }}>{t('lobby.join')}</button>
           </div>
+          <RoomList
+            rooms={availableRooms}
+            onJoinRoom={joinRoomFromList}
+            myProfile={myProfile}
+          />
         </div>
       ) : (
         <>

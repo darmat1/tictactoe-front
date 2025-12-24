@@ -14,6 +14,16 @@
     "create": "Vytvořit",
     "join": "Připojit"
   },
+  "roomList": {
+    "title": "Dostupné místnosti",
+    "noRooms": "Žádné aktivní místnosti",
+    "join": "Připojit",
+    "ownRoom": "Vaše místnost",
+    "justNow": "právě teď",
+    "minutesAgo": "před {{count}} min",
+    "hoursAgo": "před {{count}} hodinou",
+    "daysAgo": "před {{count}} dnem"
+  },
   "game": {
     "enterRoomId": "Zadejte ID místnosti",
     "waitingForPlayer": "Čekáme na druhého hráče...",
@@ -45,5 +55,15 @@
     "soundOn": "Zvuk zap.",
     "soundOff": "Zvuk vyp.",
     "volume": "Hlasitost"
+  },
+  "errors": {
+    "roomOccupied": "Místnost je obsazená!",
+    "roomNotFound": "Místnost nenalezena",
+    "roomFull": "Místnost je plná",
+    "gameNotFound": "Hra nenalezena",
+    "notYourTurn": "Nejsi na tahu!",
+    "cellOccupied": "Buňka je obsazená",
+    "notPlayingAsX": "Nejsi jako X!",
+    "notPlayingAsO": "Nejsi jako O!"
   }
 }

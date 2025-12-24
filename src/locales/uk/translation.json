@@ -14,6 +14,16 @@
     "create": "Створити",
     "join": "Увійти"
   },
+  "roomList": {
+    "title": "Доступні кімнати",
+    "noRooms": "Немає активних кімнат",
+    "join": "Увійти",
+    "ownRoom": "Ваша кімната",
+    "justNow": "щойно",
+    "minutesAgo": "{{count}} хв тому",
+    "hoursAgo": "{{count}} год тому",
+    "daysAgo": "{{count}} день тому"
+  },
   "game": {
     "enterRoomId": "Введіть ID кімнати",
     "waitingForPlayer": "Чекаємо другого гравця...",
@@ -45,5 +55,15 @@
     "soundOn": "Звук увімк",
     "soundOff": "Звук вимк",
     "volume": "Потужність"
+  },
+  "errors": {
+    "roomOccupied": "Кімната зайнята!",
+    "roomNotFound": "Кімнату не знайдено",
+    "roomFull": "Кімната повна",
+    "gameNotFound": "Гру не знайдено",
+    "notYourTurn": "Зараз не твій хід",
+    "cellOccupied": "Клітинка зайнята",
+    "notPlayingAsX": "Ви не граєте за X!",
+    "notPlayingAsO": "Ви не граєте за O!"
   }
 }

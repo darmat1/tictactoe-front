@@ -14,6 +14,16 @@
     "create": "Ստեղծել",
     "join": "Միանալ"
   },
+  "roomList": {
+    "title": "Մատչելի սենյակներ",
+    "noRooms": "Ակտիվ սենյակներ չկան",
+    "join": "Միանալ",
+    "ownRoom": "Ձեր սենյակը",
+    "justNow": "հենց հիմա",
+    "minutesAgo": "{{count}} րոպե առաջ",
+    "hoursAgo": "{{count}} ժամ առաջ",
+    "daysAgo": "{{count}} օր առաջ"
+  },
   "game": {
     "enterRoomId": "Մուտքագրել սենյակի ID",
     "waitingForPlayer": "Սպասում ենք երկրորդ խաղացողի...",
@@ -45,5 +55,15 @@
     "soundOn": "Ձայն միաց.",
     "soundOff": "Ձայն անջ.",
     "volume": "Ձայնի ուժ"
+  },
+  "errors": {
+    "roomOccupied": "Սենյակը զբաղված է!",
+    "roomNotFound": "Սենյակը չի գտնվել",
+    "roomFull": "Սենյակը լիքացած է",
+    "gameNotFound": "Խաղը չի գտնվել",
+    "notYourTurn": "Քո հերթը չէ!",
+    "cellOccupied": "Վանդակը զբաղված է",
+    "notPlayingAsX": "Դուք X-ով չեք խաղում!",
+    "notPlayingAsO": "Դուք O-ով չեք խաղում!"
   }
 }

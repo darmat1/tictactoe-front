@@ -14,6 +14,16 @@
     "create": "Erstellen",
     "join": "Beitreten"
   },
+  "roomList": {
+    "title": "Verfügbare Räume",
+    "noRooms": "Keine aktiven Räume",
+    "join": "Beitreten",
+    "ownRoom": "Ihr Raum",
+    "justNow": "gerade jetzt",
+    "minutesAgo": "vor {{count}} Min",
+    "hoursAgo": "vor {{count}} Stunde",
+    "daysAgo": "vor {{count}} Tag"
+  },
   "game": {
     "enterRoomId": "Raum-ID eingeben",
     "waitingForPlayer": "Warten auf zweiten Spieler...",
@@ -45,5 +55,15 @@
     "soundOn": "Ton an",
     "soundOff": "Ton aus",
     "volume": "Lautstärke"
+  },
+  "errors": {
+    "roomOccupied": "Raum ist besetzt!",
+    "roomNotFound": "Raum nicht gefunden",
+    "roomFull": "Raum ist voll",
+    "gameNotFound": "Spiel nicht gefunden",
+    "notYourTurn": "Du bist nicht dran!",
+    "cellOccupied": "Feld ist belegt",
+    "notPlayingAsX": "Du spielst nicht als X!",
+    "notPlayingAsO": "Du spielst nicht als O!"
   }
 }

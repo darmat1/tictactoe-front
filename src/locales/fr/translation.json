@@ -14,6 +14,16 @@
     "create": "Créer",
     "join": "Rejoindre"
   },
+  "roomList": {
+    "title": "Salles disponibles",
+    "noRooms": "Aucune salle active",
+    "join": "Rejoindre",
+    "ownRoom": "Votre salle",
+    "justNow": "à l'instant",
+    "minutesAgo": "il y a {{count}} min",
+    "hoursAgo": "il y a {{count}} heure",
+    "daysAgo": "il y a {{count}} jour"
+  },
   "game": {
     "enterRoomId": "Entrer l'ID de la salle",
     "waitingForPlayer": "En attente du deuxième joueur...",
@@ -45,5 +55,15 @@
     "soundOn": "Son activé",
     "soundOff": "Son désactivé",
     "volume": "Volume"
+  },
+  "errors": {
+    "roomOccupied": "La salle est occupée!",
+    "roomNotFound": "Salle non trouvée",
+    "roomFull": "La salle est pleine",
+    "gameNotFound": "Jeu non trouvé",
+    "notYourTurn": "Ce n'est pas votre tour!",
+    "cellOccupied": "La case est occupée",
+    "notPlayingAsX": "Vous ne jouez pas en tant que X!",
+    "notPlayingAsO": "Vous ne jouez pas en tant que O!"
   }
 }

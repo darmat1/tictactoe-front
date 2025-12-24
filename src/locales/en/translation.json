@@ -14,6 +14,16 @@
     "create": "Create",
     "join": "Join"
   },
+  "roomList": {
+    "title": "Available Rooms",
+    "noRooms": "No active rooms",
+    "join": "Join",
+    "ownRoom": "Your Room",
+    "justNow": "just now",
+    "minutesAgo": "{{count}} min ago",
+    "hoursAgo": "{{count}} hour ago",
+    "daysAgo": "{{count}} day ago"
+  },
   "game": {
     "enterRoomId": "Enter room ID",
     "waitingForPlayer": "Waiting for second player...",
@@ -45,5 +55,15 @@
     "soundOn": "Sound On",
     "soundOff": "Sound Off",
     "volume": "Volume"
+  },
+  "errors": {
+    "roomOccupied": "Room is occupied!",
+    "roomNotFound": "Room not found",
+    "roomFull": "Room is full",
+    "gameNotFound": "Game not found",
+    "notYourTurn": "It's not your turn!",
+    "cellOccupied": "Cell is occupied",
+    "notPlayingAsX": "You're not playing as X!",
+    "notPlayingAsO": "You're not playing as O!"
   }
 }

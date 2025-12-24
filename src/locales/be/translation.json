@@ -14,6 +14,16 @@
     "create": "Стварыць",
     "join": "Увайсці"
   },
+  "roomList": {
+    "title": "Даступныя пакоі",
+    "noRooms": "Няма актыўных пакояў",
+    "join": "Увайсці",
+    "ownRoom": "Ваш пакой",
+    "justNow": "толькі што",
+    "minutesAgo": "{{count}} хвілін таму",
+    "hoursAgo": "{{count}} гадзіну таму",
+    "daysAgo": "{{count}} дзень таму"
+  },
   "game": {
     "enterRoomId": "Увядзіце ID пакоя",
     "waitingForPlayer": "Чакаем другога гульца...",
@@ -45,5 +55,15 @@
     "soundOn": "Гук уключ.",
     "soundOff": "Гук выкл.",
     "volume": "Гучнасць"
+  },
+  "errors": {
+    "roomOccupied": "Пакой заняты!",
+    "roomNotFound": "Пакой не знойдзены",
+    "roomFull": "Пакой поўны",
+    "gameNotFound": "Гра не знойдзена",
+    "notYourTurn": "Зараз не твой ход!",
+    "cellOccupied": "Вочка занятая",
+    "notPlayingAsX": "Вы не гуляеце за X!",
+    "notPlayingAsO": "Вы не гуляеце за O!"
   }
 }

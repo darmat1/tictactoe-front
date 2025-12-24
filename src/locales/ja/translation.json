@@ -14,6 +14,16 @@
     "create": "作成",
     "join": "参加"
   },
+  "roomList": {
+    "title": "利用可能なルーム",
+    "noRooms": "アクティブなルームがありません",
+    "join": "参加",
+    "ownRoom": "あなたのルーム",
+    "justNow": "たった今",
+    "minutesAgo": "{{count}}分前",
+    "hoursAgo": "{{count}}時間前",
+    "daysAgo": "{{count}}日前"
+  },
   "game": {
     "enterRoomId": "ルームIDを入力",
     "waitingForPlayer": "2人目のプレイヤーを待っています...",
@@ -45,5 +55,15 @@
     "soundOn": "サウンドオン",
     "soundOff": "サウンドオフ",
     "volume": "音量"
+  },
+  "errors": {
+    "roomOccupied": "ルームが占有されています！",
+    "roomNotFound": "ルームが見つかりません",
+    "roomFull": "ルームが満員です",
+    "gameNotFound": "ゲームが見つかりません",
+    "notYourTurn": "あなたの番ではありません！",
+    "cellOccupied": "セルが占有されています",
+    "notPlayingAsX": "あなたはXとしてプレイしていません！",
+    "notPlayingAsO": "あなたはOとしてプレイしていません！"
   }
 }

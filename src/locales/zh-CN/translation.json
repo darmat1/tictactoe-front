@@ -14,6 +14,16 @@
     "create": "创建",
     "join": "加入"
   },
+  "roomList": {
+    "title": "可用房间",
+    "noRooms": "没有活跃房间",
+    "join": "加入",
+    "ownRoom": "你的房间",
+    "justNow": "刚刚",
+    "minutesAgo": "{{count}} 分钟前",
+    "hoursAgo": "{{count}} 小时前",
+    "daysAgo": "{{count}} 天前"
+  },
   "game": {
     "enterRoomId": "输入房间ID",
     "waitingForPlayer": "等待第二个玩家...",
@@ -45,5 +55,15 @@
     "soundOn": "声音开",
     "soundOff": "声音关",
     "volume": "音量"
+  },
+  "errors": {
+    "roomOccupied": "房间已被占用！",
+    "roomNotFound": "找不到房间",
+    "roomFull": "房间已满",
+    "gameNotFound": "找不到游戏",
+    "notYourTurn": "还不是你的回合！",
+    "cellOccupied": "格子已被占用",
+    "notPlayingAsX": "你不是X玩家！",
+    "notPlayingAsO": "你不是O玩家！"
   }
 }

@@ -14,6 +14,16 @@
     "create": "Жасау",
     "join": "Кіру"
   },
+  "roomList": {
+    "title": "Қолжетімді бөлмелер",
+    "noRooms": "Белсенді бөлмелер жоқ",
+    "join": "Кіру",
+    "ownRoom": "Сіздің бөлмеңіз",
+    "justNow": "қазір ғана",
+    "minutesAgo": "{{count}} минут бұрын",
+    "hoursAgo": "{{count}} сағат бұрын",
+    "daysAgo": "{{count}} күн бұрын"
+  },
   "game": {
     "enterRoomId": "Бөлме ID-сін енгізу",
     "waitingForPlayer": "Екінші ойыншыны күтудеміз...",
@@ -45,5 +55,15 @@
     "soundOn": "Дыбыс қосылған",
     "soundOff": "Дыбыс өшірілген",
     "volume": "Дыбыс күшейту"
+  },
+  "errors": {
+    "roomOccupied": "Бөлме алынған!",
+    "roomNotFound": "Бөлме табылмады",
+    "roomFull": "Бөлме толты",
+    "gameNotFound": "Ойын табылмады",
+    "notYourTurn": "Сіздің кезегіңіз емес!",
+    "cellOccupied": "Ұяшық алынған",
+    "notPlayingAsX": "Сіз X ретінде ойнайсыз!",
+    "notPlayingAsO": "Сіз O ретінде ойнайсыз!"
   }
 }

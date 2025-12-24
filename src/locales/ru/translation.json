@@ -14,6 +14,16 @@
     "create": "Создать",
     "join": "Войти"
   },
+  "roomList": {
+    "title": "Доступные комнаты",
+    "noRooms": "Нет активных комнат",
+    "join": "Войти",
+    "ownRoom": "Ваша комната",
+    "justNow": "только что",
+    "minutesAgo": "{{count}} мин назад",
+    "hoursAgo": "{{count}} час назад",
+    "daysAgo": "{{count}} день назад"
+  },
   "game": {
     "enterRoomId": "Введите ID комнаты",
     "waitingForPlayer": "Ждем второго игрока...",
@@ -45,5 +55,15 @@
     "soundOn": "Звук вкл",
     "soundOff": "Звук выкл",
     "volume": "Громкость"
+  },
+  "errors": {
+    "roomOccupied": "Комната занята!",
+    "roomNotFound": "Комната не найдена",
+    "roomFull": "Комната полна",
+    "gameNotFound": "Игра не найдена",
+    "notYourTurn": "Сейчас не твой ход",
+    "cellOccupied": "Клетка занята",
+    "notPlayingAsX": "Вы не играете за X!",
+    "notPlayingAsO": "Вы не играете за O!"
   }
 }
