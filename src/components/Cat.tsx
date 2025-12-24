@@ -28,8 +28,8 @@ const Cat = () => {
         <div
             style={{
                 position: 'absolute',
-                bottom: '-52px',
-                right: '0',
+                bottom: '-53px',
+                right: '-15px',
                 width: '150px',
                 cursor: 'pointer',
                 zIndex: 100

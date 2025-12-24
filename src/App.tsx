@@ -159,10 +159,10 @@ function App() {
       const effectiveSymbol = newSymbol || symbol;
       const amIStarting = turn === effectiveSymbol;
 
-       setIsMyTurn(amIStarting);
-       setStatus(amIStarting ? t('game.yourTurn') : t('game.waitingForOpponent'));
+      setIsMyTurn(amIStarting);
+      setStatus(amIStarting ? t('game.yourTurn') : t('game.waitingForOpponent'));
 
-       showNotification(t('notifications.gameStarted', { symbol: effectiveSymbol === 'X' ? '❌' : '⭕' }), 'info');
+      showNotification(t('notifications.gameStarted', { symbol: effectiveSymbol === 'X' ? '❌' : '⭕' }), 'info');
       playSfx('notify');
     });
 
@@ -200,7 +200,7 @@ function App() {
   const joinRoom = () => { if (!roomId) return showNotification(t('notifications.enterRoomName'), 'error'); socket.emit('join_game', { roomId, profile: myProfile }); };
   const handleCellClick = (index: number) => { if (!isMyTurn || board[index] !== null) return; socket.emit('make_move', { roomId, index, symbol }); };
   const toggleSound = () => { setIsMuted(!isMuted); };
-  
+
   const updateVolume = (newVolume: number) => {
     setVolume(newVolume);
     sounds = createSounds(newVolume);
@@ -225,15 +225,15 @@ function App() {
 
   return (
     <div className="container" dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>
-       <div className='header'>
-         {isInGame && <span>{t('common.room', { roomId })}</span>}
-         {!!symbol && <div style={{ fontWeight: 'bold', color: symbol === 'X' ? '#0088cc' : '#e91e63' }}>
-           {symbol}
-         </div>}
-         <button className="settings-btn" onClick={() => setIsSettingsOpen(true)}>
-           ⚙️
-         </button>
-       </div>
+      <div className='header'>
+        {isInGame ? <span className='room'>{t('common.room').replace('{{roomId}}', '').trim()} <strong>{roomId}</strong></span> : <span className='room'></span>}
+        {!!symbol ? <div style={{ fontWeight: 'bold', color: symbol === 'X' ? '#0088cc' : '#e91e63' }}>
+          {symbol}
+        </div> : <div></div>}
+        <button className="settings-btn" onClick={() => setIsSettingsOpen(true)}>
+          ⚙️
+        </button>
+      </div>
 
       {notification && <div className={`notification ${notification.type}`}>{notification.msg}</div>}
 
@@ -295,7 +295,7 @@ function App() {
           )}
         </>
       )}
-      
+
       <Settings
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}

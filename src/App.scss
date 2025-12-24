@@ -25,6 +25,10 @@ $text-color: #ffffff;
   font-family: sans-serif;
   gap: 1rem;
 
+  .room {
+    text-align: left;
+  }
+
   &[dir="rtl"] {
     font-family: 'Arial', sans-serif;
 
@@ -48,8 +52,8 @@ h1 {
 
 .header {
   position: relative;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   align-items: center;
   width: 100%;
   padding: 0 15px;
