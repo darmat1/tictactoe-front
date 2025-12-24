@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import LanguageSelector from './LanguageSelector';
+import potuzhnoGif from '/public/static/images/potuzhno.gif';
 
 interface SettingsProps {
   isOpen: boolean;
@@ -14,9 +15,11 @@ const UkrainianVideo = () => {
   return (
     <div className="ukrainian-video">
       <img
-        src="/static/images/potuzhno.gif"
+        src={potuzhnoGif}
         alt="Potuzhno"
         className="funny-gif"
+        onLoad={() => console.log('GIF loaded')}
+        onError={() => console.log('GIF error')}
       />
     </div>
   );
@@ -24,7 +27,7 @@ const UkrainianVideo = () => {
 
 const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, isMuted, toggleSound, volume, setVolume }) => {
   const { t, i18n } = useTranslation();
-
+  
   if (!isOpen) return null;
 
   const shouldShowVideo = i18n.language === 'uk' && volume === 1.0;
