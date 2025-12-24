@@ -65,9 +65,10 @@ function App() {
 
   const timerRef = useRef<any>(null);
 
-  const showNotification = (msg: string, type: 'error' | 'info', autoHide: boolean = true) => {
+  const showNotification = (msgKey: string, params?: any, type: 'error' | 'info' = 'info', autoHide: boolean = true) => {
     if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; }
-    setNotification({ msg, type });
+    const msg = params ? t(msgKey, params) : t(msgKey);
+    setNotification({ msg: msg as string, type });
     if (type === 'info') playSfx('notify');
     if (autoHide) timerRef.current = setTimeout(() => setNotification(null), 3000);
   };
@@ -99,13 +100,25 @@ function App() {
   }, []);
 
   useEffect(() => {
+    if (!isInGame) {
+      setStatus('game.enterRoomId');
+    }
+  }, [t, isInGame]);
+
+  useEffect(() => {
+    if (!isInGame) {
+      setStatus('game.enterRoomId');
+    }
+  }, [i18n.language, isInGame]);
+
+  useEffect(() => {
     WebApp.ready();
     WebApp.expand();
 
     socket.on('created', () => {
       setSymbol(null);
       setIsInGame(true);
-      setStatus(t('game.waitingForPlayer'));
+      setStatus('game.waitingForPlayer');
       setOpponentProfile(null);
     });
 
@@ -116,10 +129,10 @@ function App() {
 
       const amIStarting = turn === symbol;
       setIsMyTurn(amIStarting);
-      setStatus(amIStarting ? t('game.yourTurn') : t('game.waitingForOpponent'));
+      setStatus(amIStarting ? 'game.yourTurn' : 'game.waitingForOpponent');
 
       playSfx('notify');
-      showNotification(t('notifications.youArePlayingAs', { symbol: symbol === 'X' ? '❌' : '⭕' }), 'info');
+      showNotification('notifications.youArePlayingAs', { symbol: symbol === 'X' ? '❌' : '⭕' }, 'info');
     });
 
     socket.on('opponent_joined', ({ profile }) => {
@@ -131,7 +144,7 @@ function App() {
       setBoard(board);
       const myTurn = turn === symbol;
       setIsMyTurn(myTurn);
-      setStatus(myTurn ? t('game.yourTurn') : t('game.waitingForOpponent'));
+      setStatus(myTurn ? 'game.yourTurn' : 'game.waitingForOpponent');
       const whoJustMoved = turn === 'X' ? 'move0' : 'moveX';
       playSfx(whoJustMoved);
     });
@@ -160,14 +173,14 @@ function App() {
       const amIStarting = turn === effectiveSymbol;
 
       setIsMyTurn(amIStarting);
-      setStatus(amIStarting ? t('game.yourTurn') : t('game.waitingForOpponent'));
+      setStatus(amIStarting ? 'game.yourTurn' : 'game.waitingForOpponent');
 
-      showNotification(t('notifications.gameStarted', { symbol: effectiveSymbol === 'X' ? '❌' : '⭕' }), 'info');
+      showNotification('notifications.gameStarted', { symbol: effectiveSymbol === 'X' ? '❌' : '⭕' }, 'info');
       playSfx('notify');
     });
 
     socket.on('opponent_wants_rematch', () => {
-      showNotification(t('notifications.rematchRequested'), 'info', false);
+      showNotification('notifications.rematchRequested', undefined, 'info', false);
     });
 
     socket.on('opponent_left', () => {
@@ -194,10 +207,10 @@ function App() {
   };
 
   const handleExit = () => { socket.emit('leave_game', roomId); resetGame(); };
-  const handlePlayAgain = () => { socket.emit('request_rematch', roomId); setWaitingForRematch(true); showNotification(t('notifications.rematchSent'), 'info', false); };
-  const resetGame = () => { setIsInGame(false); setBoard(Array(9).fill(null)); setSymbol(null); setRoomId(''); setStatus(t('game.enterRoomId')); setGameOverResult(null); setWaitingForRematch(false); setOpponentProfile(null); };
-  const createRoom = () => { if (!roomId) return showNotification(t('notifications.enterRoomName'), 'error'); socket.emit('create_game', { roomId, profile: myProfile }); };
-  const joinRoom = () => { if (!roomId) return showNotification(t('notifications.enterRoomName'), 'error'); socket.emit('join_game', { roomId, profile: myProfile }); };
+  const handlePlayAgain = () => { socket.emit('request_rematch', roomId); setWaitingForRematch(true); showNotification('notifications.rematchSent', undefined, 'info', false); };
+  const resetGame = () => { setIsInGame(false); setBoard(Array(9).fill(null)); setSymbol(null); setRoomId(''); setStatus('game.enterRoomId'); setGameOverResult(null); setWaitingForRematch(false); setOpponentProfile(null); };
+  const createRoom = () => { if (!roomId) return showNotification('notifications.enterRoomName', undefined, 'error'); socket.emit('create_game', { roomId, profile: myProfile }); };
+  const joinRoom = () => { if (!roomId) return showNotification('notifications.enterRoomName', undefined, 'error'); socket.emit('join_game', { roomId, profile: myProfile }); };
   const handleCellClick = (index: number) => { if (!isMyTurn || board[index] !== null) return; socket.emit('make_move', { roomId, index, symbol }); };
   const toggleSound = () => { setIsMuted(!isMuted); };
 
@@ -266,7 +279,7 @@ function App() {
             </div>
           </div>
 
-          <div style={{ fontSize: '1rem', color: '#ccc', marginBottom: '15px' }}>{!gameOverResult && status}</div>
+          <div style={{ fontSize: '1rem', color: '#ccc', marginBottom: '15px' }}>{!gameOverResult && t(status)}</div>
           <div style={{ position: "relative", width: "260px" }}>
             <Cat />
           </div>
